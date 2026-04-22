@@ -1,0 +1,16 @@
+variable "rg_name" {
+  description = "Resource group name"
+  type        = string
+}
+variable "name" {
+  description = "Name of the Network Security Group"
+  type        = string
+}
+variable "location" {
+  description = "Azure region for the Network Security Group"
+  type        = string
+}
+variable "subnet_id" {
+  description = "ID of the subnet to associate with the NSG"
+  type        = string
+}
