@@ -2,7 +2,7 @@ trigger:
   - main
 
 pool:
-  name: ubuntu-latest
+  vmImage: ubuntu-latest
 
 variables:
   KEY_VAULT_NAME: "demonain111ws-kv"
