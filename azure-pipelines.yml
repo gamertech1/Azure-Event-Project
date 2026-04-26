@@ -41,6 +41,10 @@ stages:
               inlineScript: |
                 chmod +x $(TF_WORKING_DIR)/scripts/terraform-script.sh
                 $(TF_WORKING_DIR)/scripts/terraform-script.sh plan $(env) $(component)
+          - task: PublishPipelineArtifact@1
+            inputs:
+              targetPath: '$(TF_WORKING_DIR)/infra/environments/$(env)/core-infra/tfplan'
+              artifact: 'tfplan'
       - job: ManualApproval
         pool: server
         dependsOn: TerraformPlan
@@ -66,6 +70,10 @@ stages:
            - task: TerraformInstaller@1
              inputs:
                 terraformVersion: 'latest'
+           - task: DownloadPipelineArtifact@1
+             inputs:
+                artifact: 'tfplan'
+                path: '$(TF_WORKING_DIR)/downloaded'
            -  task: AzureCLI@2
               inputs:
                 azureSubscription: 'Bootstrap-terraform'
