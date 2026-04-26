@@ -19,7 +19,7 @@ terraform init \
 if [ "$ACTION" == "plan" ]; then
   terraform plan -out=tfplan
 elif [ "$ACTION" == "apply" ]; then
-  terraform apply tfplan -auto-approve
+  terraform apply -auto-approve tfplan
 elif [ "$ACTION" == "destroy" ]; then
   terraform destroy -auto-approve
 fi
