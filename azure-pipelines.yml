@@ -10,14 +10,17 @@ variables:
   AZURE_SERVICE_CONNECTION: "Bootstrap-terraform"
 
 stages:
-  - stage: Dev
+  - stage: Prod
     variables:
      env: prod
-    displayName: "${env} Infrastructure"
+    displayName: "$(env) Infrastructure"
     jobs:
       - job: TerraformPlan
         displayName: "Terraform Plan"
         steps:
+          - task: TerraformInstaller@1
+            inputs:
+              terraformVersion: 'latest'
           - task: AzureCLI@2
             inputs:
               azureSubscription: 'Bootstrap-terraform'
