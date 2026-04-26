@@ -13,7 +13,7 @@ stages:
   - stage: Prod
     variables:
      env: prod
-    displayName: "$(env) Infrastructure"
+    displayName: "{{ variables.env }} Infrastructure"
     jobs:
       - job: TerraformPlan
         displayName: "Terraform Plan"
