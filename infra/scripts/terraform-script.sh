@@ -7,7 +7,7 @@ if [ -z "$ACTION" ] || [ -z "$ENV" ]; then
   echo "Usage: $0 <plan|apply|destroy> <environment>"
   exit 1
 fi
-WORKDIR="/environments/$ENV"
+WORKDIR="infra/environments/$ENV"
 echo "👉 Running Terraform $ACTION for $ENV"
 
 cd $WORKDIR
