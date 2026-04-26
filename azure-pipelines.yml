@@ -8,12 +8,16 @@ variables:
   KEY_VAULT_NAME: "demonain111ws-kv"
   TF_WORKING_DIR: "$(System.DefaultWorkingDirectory)/infra"
   AZURE_SERVICE_CONNECTION: "Bootstrap-terraform"
+parameters:
+  - name: env
+    type: string
+    default: prod
 
 stages:
   - stage: Prod
     variables:
      env: prod
-    displayName: "{{ variables.env }} Infrastructure"
+    displayName: "${{ parameters.env }} Infrastructure"
     jobs:
       - job: TerraformPlan
         displayName: "Terraform Plan"
