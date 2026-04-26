@@ -81,4 +81,4 @@ stages:
                 scriptLocation: inlineScript
                 inlineScript: |
                   chmod +x $(TF_WORKING_DIR)/scripts/terraform-script.sh
-                  $(TF_WORKING_DIR)/scripts/terraform-script.sh apply $(env) $(component)
+                  $(TF_WORKING_DIR)/scripts/terraform-script.sh apply $(env) $(component) $(TF_WORKING_DIR)/downloaded/tfplan
