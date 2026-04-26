@@ -2,9 +2,7 @@ trigger:
   - main
 
 pool:
-  name: Bootstrap-azure-pipeline
-  demands:
-    - agent.name -equals Bootstrap-azure-pipeline
+  name: ubuntu-latest
 
 variables:
   KEY_VAULT_NAME: "demonain111ws-kv"
@@ -12,31 +10,22 @@ variables:
   AZURE_SERVICE_CONNECTION: "Bootstrap-terraform"
 
 stages:
-  - stage: Bootstrap
-    displayName: "Bootstrap Infrastructure"
+  - stage: Dev
+    variables:
+     env: prod
+    displayName: "${env} Infrastructure"
     jobs:
       - job: TerraformPlan
         displayName: "Terraform Plan"
         steps:
-
-          # ── Terraform Init ─────────────────────────────────────────────────
-          - task: TerraformTask@5
+          - task: AzureCLI@2
             inputs:
-              provider: "azurerm"
-              command: "init"
-              workingDirectory: "$(System.DefaultWorkingDirectory)/infra"
-              backendServiceArm: "Bootstrap-terraform"
-              backendAzureRmStorageAccountName: "bootstrapsa1234"
-              backendAzureRmContainerName: "bootstrap"
-              backendAzureRmKey: "prod.terraform.tfstate"
-          # ── Terraform Plan ─────────────────────────────────────────────────
-          - task: TerraformTask@5
-            inputs:
-              provider: "azurerm"
-              command: "plan"
-              workingDirectory: "$(TF_WORKING_DIR)"
-              environmentServiceNameAzureRM: "Bootstrap-terraform"
-              commandOptions: '-var-file="prod.tfvars"'
+              azureSubscription: 'Bootstrap-terraform'
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                chmod +x $(TF_WORKING_DIR)/scripts/terraform-script.sh
+                $(TF_WORKING_DIR)/scripts/terraform-script.sh plan $(env)
       - job: ManualApproval
         pool: server
         dependsOn: TerraformPlan
@@ -50,19 +39,11 @@ stages:
       - job: TerraformApply
         dependsOn: ManualApproval
         steps:
-            - task: TerraformTask@5
+           -  task: AzureCLI@2
               inputs:
-                provider: "azurerm"
-                command: "init"
-                workingDirectory: "$(System.DefaultWorkingDirectory)/infra"
-                backendServiceArm: "Bootstrap-terraform"
-                backendAzureRmStorageAccountName: "bootstrapsa1234"
-                backendAzureRmContainerName: "bootstrap"
-                backendAzureRmKey: "prod.terraform.tfstate"
-            - task: TerraformTask@5
-              inputs:
-                provider: "azurerm"
-                command: "apply"
-                workingDirectory: "$(TF_WORKING_DIR)"
-                environmentServiceNameAzureRM: "Bootstrap-terraform"
-                commandOptions: '-var-file="prod.tfvars" --auto-approve'
+                azureSubscription: 'Bootstrap-terraform'
+                scriptType: bash
+                scriptLocation: inlineScript
+                inlineScript: |
+                  chmod +x $(TF_WORKING_DIR)/scripts/terraform-script.sh
+                  $(TF_WORKING_DIR)/scripts/terraform-script.sh plan $(env)
