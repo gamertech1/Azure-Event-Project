@@ -63,6 +63,9 @@ stages:
             #   component: storage
 
         steps:
+           - task: TerraformInstaller@1
+             inputs:
+                terraformVersion: 'latest'
            -  task: AzureCLI@2
               inputs:
                 azureSubscription: 'Bootstrap-terraform'
