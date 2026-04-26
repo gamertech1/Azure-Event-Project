@@ -3,11 +3,12 @@
 set -e
 ACTION=$1
 ENV=$2
+COMPONENT=$3
 if [ -z "$ACTION" ] || [ -z "$ENV" ]; then
   echo "Usage: $0 <plan|apply|destroy> <environment>"
   exit 1
 fi
-WORKDIR="infra/environments/$ENV"
+WORKDIR="infra/environments/$ENV/$COMPONENT"
 echo "👉 Running Terraform $ACTION for $ENV"
 
 cd $WORKDIR
