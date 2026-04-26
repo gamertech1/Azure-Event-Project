@@ -43,7 +43,7 @@ stages:
                 $(TF_WORKING_DIR)/scripts/terraform-script.sh plan $(env) $(component)
           - task: PublishPipelineArtifact@1
             inputs:
-              targetPath: '$(TF_WORKING_DIR)/infra/environments/$(env)/core-infra/tfplan'
+              targetPath: '$(TF_WORKING_DIR)/infra/environments/$(env)/core-infra/'
               artifact: 'tfplan'
       - job: ManualApproval
         pool: server
