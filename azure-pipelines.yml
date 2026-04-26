@@ -21,10 +21,10 @@ stages:
           matrix:
             coreInfra:
               component: core-infra
-            service:
-              component: service
-            storage:
-              component: storage
+            # service:
+            #   component: service
+            # storage:
+            #   component: storage
         steps:
           - task: TerraformInstaller@1
             inputs:
