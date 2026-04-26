@@ -28,6 +28,7 @@ stages:
               scriptLocation: inlineScript
               inlineScript: |
                 chmod +x $(TF_WORKING_DIR)/scripts/terraform-script.sh
+                cat $(env)
                 $(TF_WORKING_DIR)/scripts/terraform-script.sh plan $(env)
       - job: ManualApproval
         pool: server
