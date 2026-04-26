@@ -5,80 +5,25 @@ pool:
   vmImage: ubuntu-latest
 
 variables:
-  KEY_VAULT_NAME: "demonain111ws-kv"
   TF_WORKING_DIR: "$(System.DefaultWorkingDirectory)/infra"
   AZURE_SERVICE_CONNECTION: "Bootstrap-terraform"
+
 parameters:
-  - name: env
-    type: string
-    default: prod
+  - name: deployEnvironments
+    type: object
+    default:
+      - dev
+      - prod
 
+# Deploy to each specified environment
 stages:
-  - stage: Prod
-    variables:
-     env: prod
-    displayName: "${{ parameters.env }} Infrastructure"
-    jobs:
-      - job: TerraformPlan
-        displayName: "Terraform Plan"
-        strategy:
-          matrix:
-            coreInfra:
-              component: core-infra
-            # service:
-            #   component: service
-            # storage:
-            #   component: storage
-        steps:
-          - task: TerraformInstaller@1
-            inputs:
-              terraformVersion: 'latest'
-          - task: AzureCLI@2
-            inputs:
-              azureSubscription: 'Bootstrap-terraform'
-              scriptType: bash
-              scriptLocation: inlineScript
-              inlineScript: |
-                chmod +x $(TF_WORKING_DIR)/scripts/terraform-script.sh
-                $(TF_WORKING_DIR)/scripts/terraform-script.sh plan $(env) $(component)
-          - task: PublishPipelineArtifact@1
-            inputs:
-              targetPath: '$(TF_WORKING_DIR)/environments/$(env)/core-infra/'
-              artifact: 'tfplan'
-      - job: ManualApproval
-        pool: server
-        dependsOn: TerraformPlan
-        steps:
-            - task: ManualValidation@1
-              inputs:
-                notifyUsers: 'gamertech996@gmail.com'
-                instructions: 'Please approve deployment to production'
-                onTimeout: 'reject'
-                timeout: '1d'
-      - job: TerraformApply
-        dependsOn: ManualApproval
-        strategy:
-          matrix:
-            coreInfra:
-              component: core-infra
-            # service:
-            #   component: service
-            # storage:
-            #   component: storage
-
-        steps:
-           - task: TerraformInstaller@1
-             inputs:
-                terraformVersion: 'latest'
-           - task: DownloadPipelineArtifact@2
-             inputs:
-                artifactName: 'tfplan'
-                targetPath: '$(TF_WORKING_DIR)/downloaded'
-           -  task: AzureCLI@2
-              inputs:
-                azureSubscription: 'Bootstrap-terraform'
-                scriptType: bash
-                scriptLocation: inlineScript
-                inlineScript: |
-                  chmod +x $(TF_WORKING_DIR)/scripts/terraform-script.sh
-                  $(TF_WORKING_DIR)/scripts/terraform-script.sh apply $(env) $(component) $(TF_WORKING_DIR)/downloaded/tfplan
+  - ${{ each environment in parameters.deployEnvironments }}:
+      - template: template/deployment-template.yml
+        parameters:
+          environment: ${{ environment }}
+          approverEmail: "gamertech996@gmail.com"
+          components:
+            - core-infra
+            # Uncomment to add more components:
+            # - service
+            # - storage

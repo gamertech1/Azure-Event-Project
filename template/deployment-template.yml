@@ -1,0 +1,101 @@
+parameters:
+  - name: environment
+    type: string
+  - name: approverEmail
+    type: string
+    default: ""
+  - name: components
+    type: object
+    default:
+      - core-infra
+
+stages:
+  - stage: ${{ upper(parameters.environment) }}
+    displayName: "${{ parameters.environment }} Infrastructure Deployment"
+    variables:
+      env: ${{ parameters.environment }}
+    jobs:
+      - job: TerraformPlan
+        displayName: "Terraform Plan - ${{ parameters.environment }}"
+        strategy:
+          matrix:
+            ${{ each component in parameters.components }}:
+              ${{ component }}:
+                component: ${{ component }}
+        steps:
+          - task: TerraformInstaller@1
+            displayName: "Install Terraform"
+            inputs:
+              terraformVersion: "latest"
+
+          - task: AzureCLI@2
+            displayName: "Terraform Plan (${{ parameters.environment }})"
+            inputs:
+              azureSubscription: "Bootstrap-terraform"
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                chmod +x $(TF_WORKING_DIR)/scripts/terraform-script.sh
+                $(TF_WORKING_DIR)/scripts/terraform-script.sh plan $(env) $(component)
+                mkdir -p $(Build.ArtifactStagingDirectory)/$(env)/$(component)
+                cp $(TF_WORKING_DIR)/environments/$(env)/$(component)/tfplan \
+                   $(Build.ArtifactStagingDirectory)/$(env)/$(component)
+
+          - task: PublishPipelineArtifact@1
+            displayName: "Publish Terraform Plan"
+            inputs:
+              targetPath: "$(Build.ArtifactStagingDirectory)/$(env)/$(component)"
+              artifact: "tfplan-$(component)-$(env)"
+
+          - job: ManualApproval
+            displayName: "Manual Approval - ${{ parameters.environment }}"
+            pool: server
+            dependsOn: TerraformPlan
+            steps:
+              - task: ManualValidation@1
+                inputs:
+                  notifyUsers: "${{ parameters.approverEmail }}"
+                  instructions: "Please review and approve the ${{ parameters.environment }}
+                    infrastructure changes"
+                  onTimeout: "reject"
+                  timeout: "1d"
+
+      - job: TerraformApply
+        displayName: "Terraform Apply - ${{ parameters.environment }}"
+        ${{ if eq(parameters.requiresApproval, true) }}:
+          dependsOn:
+            - ManualApproval
+        ${{ if ne(parameters.requiresApproval, true) }}:
+          dependsOn:
+            - TerraformPlan
+        strategy:
+          matrix:
+            ${{ each component in parameters.components }}:
+              ${{ component }}:
+                component: ${{ component }}
+        steps:
+          - task: TerraformInstaller@1
+            displayName: "Install Terraform"
+            inputs:
+              terraformVersion: "latest"
+
+          - task: DownloadPipelineArtifact@2
+            displayName: "Download Terraform Plan"
+            inputs:
+              artifactName: "tfplan-$(component)-$(env)"
+              targetPath: "$(Build.ArtifactStagingDirectory)/downloaded"
+
+          - task: AzureCLI@2
+            displayName: "Terraform Apply (${{ parameters.environment }})"
+            inputs:
+              azureSubscription: "Bootstrap-terraform"
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                echo "===== DEBUG: Downloaded Files ====="
+                ls -lh $(Build.ArtifactStagingDirectory)/downloaded/
+
+                echo "===== FILE SIZE ====="
+                du -h $(Build.ArtifactStagingDirectory)/downloaded/tfplan
+                chmod +x $(TF_WORKING_DIR)/scripts/terraform-script.sh
+                $(TF_WORKING_DIR)/scripts/terraform-script.sh apply $(env) $(component) $(Build.ArtifactStagingDirectory)/downloaded/tfplan
