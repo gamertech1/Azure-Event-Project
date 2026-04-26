@@ -70,10 +70,10 @@ stages:
            - task: TerraformInstaller@1
              inputs:
                 terraformVersion: 'latest'
-           - task: DownloadPipelineArtifact@1
+           - task: DownloadPipelineArtifact@2
              inputs:
-                artifact: 'tfplan'
-                path: '$(TF_WORKING_DIR)/downloaded'
+                artifactName: 'tfplan'
+                targetPath: '$(TF_WORKING_DIR)/downloaded'
            -  task: AzureCLI@2
               inputs:
                 azureSubscription: 'Bootstrap-terraform'
