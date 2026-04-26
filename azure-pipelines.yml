@@ -1,5 +1,5 @@
 trigger:
-  - main
+  - none
 
 pool:
   vmImage: ubuntu-latest
@@ -17,6 +17,14 @@ stages:
     jobs:
       - job: TerraformPlan
         displayName: "Terraform Plan"
+        strategy:
+          matrix:
+            coreInfra:
+              component: core-infra
+            service:
+              component: service
+            storage:
+              component: storage
         steps:
           - task: TerraformInstaller@1
             inputs:
@@ -29,7 +37,7 @@ stages:
               inlineScript: |
                 chmod +x $(TF_WORKING_DIR)/scripts/terraform-script.sh
                 cat $(env)
-                $(TF_WORKING_DIR)/scripts/terraform-script.sh plan $(env)
+                $(TF_WORKING_DIR)/scripts/terraform-script.sh plan $(env) $(component)
       - job: ManualApproval
         pool: server
         dependsOn: TerraformPlan
