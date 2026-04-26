@@ -47,18 +47,18 @@ stages:
               targetPath: "$(Build.ArtifactStagingDirectory)/$(env)/$(component)"
               artifact: "tfplan-$(component)-$(env)"
 
-          - job: ManualApproval
-            displayName: "Manual Approval - ${{ parameters.environment }}"
-            pool: server
-            dependsOn: TerraformPlan
-            steps:
-              - task: ManualValidation@1
-                inputs:
-                  notifyUsers: "${{ parameters.approverEmail }}"
-                  instructions: "Please review and approve the ${{ parameters.environment }}
-                    infrastructure changes"
-                  onTimeout: "reject"
-                  timeout: "1d"
+      - job: ManualApproval
+        displayName: "Manual Approval - ${{ parameters.environment }}"
+        pool: server
+        dependsOn: TerraformPlan
+        steps:
+          - task: ManualValidation@1
+            inputs:
+              notifyUsers: "${{ parameters.approverEmail }}"
+              instructions: "Please review and approve the ${{ parameters.environment }}
+                infrastructure changes"
+              onTimeout: "reject"
+              timeout: "1d"
 
       - job: TerraformApply
         displayName: "Terraform Apply - ${{ parameters.environment }}"
