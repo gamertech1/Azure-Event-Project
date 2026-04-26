@@ -40,7 +40,6 @@ stages:
               scriptLocation: inlineScript
               inlineScript: |
                 chmod +x $(TF_WORKING_DIR)/scripts/terraform-script.sh
-                cat $(env)
                 $(TF_WORKING_DIR)/scripts/terraform-script.sh plan $(env) $(component)
       - job: ManualApproval
         pool: server
@@ -54,6 +53,15 @@ stages:
                 timeout: '1d'
       - job: TerraformApply
         dependsOn: ManualApproval
+        strategy:
+          matrix:
+            coreInfra:
+              component: core-infra
+            # service:
+            #   component: service
+            # storage:
+            #   component: storage
+
         steps:
            -  task: AzureCLI@2
               inputs:
