@@ -13,6 +13,6 @@ terraform {
     resource_group_name  = "rg-bootstrap"
     storage_account_name = "bootstrapsa1234"
     container_name       = "bootstrap"
-    key                  = "dev.service.terraform.tfstate"
+    key                  = "dev/service/terraform.tfstate"
   }
 }
