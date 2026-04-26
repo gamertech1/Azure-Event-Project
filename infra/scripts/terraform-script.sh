@@ -1,6 +1,6 @@
 #!/bin/bash
 
-Set -e
+set -e
 ACTION=$1
 ENV=$2
 if [ -z "$ACTION" ] || [ -z "$ENV" ]; then
