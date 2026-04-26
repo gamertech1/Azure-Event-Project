@@ -62,12 +62,7 @@ stages:
 
       - job: TerraformApply
         displayName: "Terraform Apply - ${{ parameters.environment }}"
-        ${{ if eq(parameters.requiresApproval, true) }}:
-          dependsOn:
-            - ManualApproval
-        ${{ if ne(parameters.requiresApproval, true) }}:
-          dependsOn:
-            - TerraformPlan
+        dependsOn: [ ManualApproval ]
         strategy:
           matrix:
             ${{ each component in parameters.components }}:
