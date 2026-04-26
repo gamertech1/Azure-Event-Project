@@ -1,0 +1,6 @@
+prefix      = "demonain111ws"
+location    = "South India"
+environment = "prod"
+layer       = "services"
+org         = "shadow"
+project     = "event"

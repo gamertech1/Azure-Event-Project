@@ -1,4 +1,4 @@
 resource "azurerm_resource_group" "rg-tfstate-bootstrap" {
-  name     = "${var.prefix}-resources"
+  name     = "${local.prefix}-rg-${var.layer}"
   location = var.location
 }

@@ -1,5 +1,5 @@
 resource "azurerm_eventgrid_topic" "example" {
-  name                = "my-eventgrid-topic"
+  name                = "${local.prefix}-eventgrid-topic"
   location            = var.location
   resource_group_name = var.name
 
@@ -9,7 +9,7 @@ resource "azurerm_eventgrid_topic" "example" {
 }
 
 resource "azurerm_eventgrid_system_topic_event_subscription" "example" {
-  name                = "example-event-subscription"
+  name                = "${local.prefix}-event-subscription"
   system_topic        = azurerm_eventgrid_system_topic.example.name
   resource_group_name = var.name
 

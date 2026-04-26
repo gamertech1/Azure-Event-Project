@@ -1,3 +1,4 @@
+variable "prefix" {}
 variable "location" {}
 variable "environment" {}
 variable "layer" {}

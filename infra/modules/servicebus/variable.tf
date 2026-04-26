@@ -5,3 +5,6 @@ variable "name" {
 variable "location" {
   type = string
 }
+variable "environment" {}
+variable "org" {}
+variable "project" {}

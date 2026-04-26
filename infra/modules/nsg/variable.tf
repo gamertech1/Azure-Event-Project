@@ -14,3 +14,6 @@ variable "subnet_id" {
   description = "ID of the subnet to associate with the NSG"
   type        = string
 }
+variable "environment" {}
+variable "org" {}
+variable "project" {}

@@ -1,5 +1,5 @@
 resource "azurerm_servicebus_namespace" "example" {
-  name                = "tfex-servicebus-namespace"
+  name                = "${local.prefix}-servicebus-namespace"
   location            = var.location
   resource_group_name = var.name
   sku                 = "Standard"
@@ -10,7 +10,7 @@ resource "azurerm_servicebus_namespace" "example" {
 }
 
 resource "azurerm_servicebus_topic" "example" {
-  name         = "tfex_servicebus_topic"
+  name         = "${local.prefix}-servicebus-topic"
   namespace_id = azurerm_servicebus_namespace.example.id
 
   partitioning_enabled = false

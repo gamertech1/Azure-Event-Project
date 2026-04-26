@@ -1,12 +1,12 @@
 resource "azurerm_network_security_group" "nsg" {
-  name                = "${var.name}-nsg"
+  name                = "${local.prefix}-${var.name}-nsg"
   location            = var.location
   resource_group_name = var.rg_name
 }
 
 # Allow SSH only from Bastion subnet
 resource "azurerm_network_security_rule" "allow_ssh_from_bastion" {
-  name                        = "Allow-SSH-From-Bastion"
+  name                        = "${local.prefix}-Allow-SSH-From-Bastion"
   priority                    = 100
   direction                   = "Inbound"
   access                      = "Allow"
@@ -21,7 +21,7 @@ resource "azurerm_network_security_rule" "allow_ssh_from_bastion" {
 
 # Deny all SSH from internet
 resource "azurerm_network_security_rule" "deny_ssh_public" {
-  name                        = "Deny-SSH-Public"
+  name                        = "${local.prefix}-Deny-SSH-Public"
   priority                    = 200
   direction                   = "Inbound"
   access                      = "Deny"
