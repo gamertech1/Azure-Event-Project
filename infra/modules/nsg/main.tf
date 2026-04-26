@@ -1,5 +1,5 @@
 resource "azurerm_network_security_group" "nsg" {
-  name                = "${local.prefix}-${var.name}-nsg"
+  name                = "${local.prefix}-nsg"
   location            = var.location
   resource_group_name = var.rg_name
 }

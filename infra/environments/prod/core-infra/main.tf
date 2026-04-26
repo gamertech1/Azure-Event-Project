@@ -32,7 +32,6 @@ module "vm" {
 
 module "nsg" {
   source      = "../../../modules/nsg"
-  name        = "${var.prefix}-nsg"
   location    = var.location
   rg_name     = module.rg.rg-1
   subnet_id   = module.vm.subnet_id

@@ -1,7 +1,7 @@
 resource "azurerm_servicebus_namespace" "example" {
   name                = "${local.prefix}-servicebus-namespace"
   location            = var.location
-  resource_group_name = var.name
+  resource_group_name = var.resource_group_name
   sku                 = "Standard"
 
   tags = {

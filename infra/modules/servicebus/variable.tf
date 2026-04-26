@@ -1,5 +1,5 @@
-variable "name" {
-  description = "Name of the Service Bus namespace"
+variable "resource_group_name" {
+  description = "Name of the resource group"
   type        = string
 }
 variable "location" {
