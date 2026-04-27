@@ -8,6 +8,7 @@ parameters:
     type: object
     default:
       - core-infra
+      - service
 
 stages:
   - stage: ${{ upper(parameters.environment) }}
