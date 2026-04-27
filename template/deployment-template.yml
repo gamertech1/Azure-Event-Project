@@ -19,6 +19,7 @@ stages:
       - job: TerraformPlan
         displayName: "Terraform Plan - ${{ parameters.environment }}"
         strategy:
+          maxParallel: 1
           matrix:
             ${{ each component in parameters.components }}:
               ${{ component }}:
@@ -65,6 +66,7 @@ stages:
         displayName: "Terraform Apply - ${{ parameters.environment }}"
         dependsOn: [ ManualApproval ]
         strategy:
+          maxParallel: 1
           matrix:
             ${{ each component in parameters.components }}:
               ${{ component }}:
@@ -79,7 +81,7 @@ stages:
             displayName: "Download Terraform Plan"
             inputs:
               artifactName: "tfplan-$(component)-$(env)"
-              targetPath: "$(Build.ArtifactStagingDirectory)/downloaded"
+              targetPath: "$(Build.ArtifactStagingDirectory)/downloaded/$(component)"
 
           - task: AzureCLI@2
             displayName: "Terraform Apply (${{ parameters.environment }})"
@@ -89,9 +91,9 @@ stages:
               scriptLocation: inlineScript
               inlineScript: |
                 echo "===== DEBUG: Downloaded Files ====="
-                ls -lh $(Build.ArtifactStagingDirectory)/downloaded/
+                ls -lh $(Build.ArtifactStagingDirectory)/downloaded/$(component)
 
                 echo "===== FILE SIZE ====="
-                du -h $(Build.ArtifactStagingDirectory)/downloaded/tfplan
+                du -h $(Build.ArtifactStagingDirectory)/downloaded/$(component)/tfplan
                 chmod +x $(TF_WORKING_DIR)/scripts/terraform-script.sh
-                $(TF_WORKING_DIR)/scripts/terraform-script.sh apply $(env) $(component) $(Build.ArtifactStagingDirectory)/downloaded/tfplan
+                $(TF_WORKING_DIR)/scripts/terraform-script.sh apply $(env) $(component) $(Build.ArtifactStagingDirectory)/downloaded/$(component)/tfplan
