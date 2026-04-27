@@ -16,7 +16,7 @@ echo "👉 Running Terraform $ACTION for $ENV"
 cd $WORKDIR
 
 terraform init \
-  -backend-config="key=$ENV/terraform.tfstate"
+  -backend-config="key=$ENV/$COMPONENT/terraform.tfstate"
 
 if [ "$ACTION" == "plan" ]; then
   terraform plan -out=tfplan
