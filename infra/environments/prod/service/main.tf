@@ -13,7 +13,7 @@ module "eventygrid" {
   org                 = var.org
   project             = var.project
   environment         = var.environment
-  resource_group_name = module.rg.name.rg-1
+  resource_group_name = module.rg.rg-1
 }
 module "servicebus" {
   source              = "../../../modules/servicebus"
@@ -21,5 +21,5 @@ module "servicebus" {
   org                 = var.org
   project             = var.project
   environment         = var.environment
-  resource_group_name = module.rg.name.rg-1
+  resource_group_name = module.rg.rg-1
 }
