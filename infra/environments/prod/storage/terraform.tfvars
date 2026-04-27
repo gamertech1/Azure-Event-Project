@@ -1,6 +1,7 @@
 prefix      = "demonain111ws"
 location    = "South India"
 environment = "prod"
-layer       = "storage"
-org         = "shadow"
-project     = "event"
+component   = "storage"
+
+org     = "shadow"
+project = "event"

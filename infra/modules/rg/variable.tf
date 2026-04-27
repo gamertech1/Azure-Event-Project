@@ -1,5 +1,5 @@
 variable "location" {}
 variable "environment" {}
-variable "layer" {}
+variable "component" {}
 variable "org" {}
 variable "project" {}

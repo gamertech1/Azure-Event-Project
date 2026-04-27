@@ -4,4 +4,3 @@ variable "environment" {}
 variable "component" {}
 variable "org" {}
 variable "project" {}
-variable "layer" {}

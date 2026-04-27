@@ -1,6 +1,6 @@
 prefix      = "demonain111ws"
 location    = "South India"
 environment = "dev"
-layer       = "core"
+component   = "core-infra"
 org         = "shadow"
 project     = "event"
