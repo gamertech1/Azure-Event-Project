@@ -25,5 +25,5 @@ stages:
           components:
             - core-infra
             # Uncomment to add more components:
-            # - service
+            - service
             # - storage
